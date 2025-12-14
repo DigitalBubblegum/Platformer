@@ -3,13 +3,24 @@ extends CharacterBody2D
 var direction_x: float = 0.0
 @export var jump_strength: int = 200
 @export var gravity:int = 800
+signal shoot(pos:Vector2, dir:Vector2)
+var gun_dir = {
+	Vector2i(1,0):0,
+	Vector2i(1,1):1,
+	Vector2i(0,1):2,
+	Vector2i(-1,1):3,
+	Vector2i(-1,0):4,
+	Vector2i(-1,-1):5,
+	Vector2i(0,-1):6,
+	Vector2i(1,-1):7
+}
 
 func get_input() -> void:
 	direction_x = Input.get_axis("left","right")
 	if Input.is_action_just_pressed("jump"):
 		velocity.y = -jump_strength
 	if Input.is_action_just_pressed("shoot") and $ReloadTimer.time_left == 0:
-		print("bang")
+		shoot.emit(position, get_local_mouse_position().normalized())
 		$ReloadTimer.start()
 		
 func apply_gravity(delta: float) -> void:
@@ -20,3 +31,15 @@ func _physics_process(delta: float) -> void:
 	velocity.x = direction_x * speed * delta
 	apply_gravity(delta)
 	move_and_slide()
+	animation()
+
+func animation():
+	var raw_dir = get_local_mouse_position().normalized()
+	var mouse_dir = Vector2i(round(raw_dir.x),round(raw_dir.y))
+	$Torso.frame = gun_dir[mouse_dir]
+	$Legs.flip_h = direction_x<0
+	if is_on_floor():
+		$AnimationPlayer.current_animation = 'run' if direction_x else 'idle'
+	else:
+		$AnimationPlayer.current_animation = 'jump'
+	
