@@ -1,12 +1,14 @@
 extends Area2D
 var direction: Vector2 = Vector2.ZERO
-@export var bullet_speed: int = 2000
+@export var bullet_speed: int = 400
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	var tween = get_tree().create_tween()
+	tween.tween_property($Sprite2D,"scale",Vector2(0.0,0.0),0.1)
+	tween.tween_property($Sprite2D,"scale",Vector2(1.0,1.0),0.1)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 	
 func setup(pos:Vector2, dir:Vector2):

@@ -22,6 +22,9 @@ func get_input() -> void:
 	if Input.is_action_just_pressed("shoot") and $ReloadTimer.time_left == 0:
 		shoot.emit(position, get_local_mouse_position().normalized())
 		$ReloadTimer.start()
+		var tween = get_tree().create_tween()
+		tween.tween_property($Marker,"scale",Vector2(0.1,0.1),0.2)
+		tween.tween_property($Marker,"scale",Vector2(0.5,0.5),0.4)
 		
 func apply_gravity(delta: float) -> void:
 	velocity.y+=gravity*delta
@@ -32,6 +35,7 @@ func _physics_process(delta: float) -> void:
 	apply_gravity(delta)
 	move_and_slide()
 	animation()
+	update_marker()
 
 func animation():
 	var raw_dir = get_local_mouse_position().normalized()
@@ -42,4 +46,7 @@ func animation():
 		$AnimationPlayer.current_animation = 'run' if direction_x else 'idle'
 	else:
 		$AnimationPlayer.current_animation = 'jump'
+	
+func update_marker():
+	$Marker.position = get_local_mouse_position().normalized()*40
 	
