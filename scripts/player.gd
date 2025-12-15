@@ -4,6 +4,7 @@ var direction_x: float = 0.0
 @export var jump_strength: int = 200
 @export var gravity:int = 800
 signal shoot(pos:Vector2, dir:Vector2)
+var jump_count: int = 2
 var gun_dir = {
 	Vector2i(1,0):0,
 	Vector2i(1,1):1,
@@ -17,8 +18,9 @@ var gun_dir = {
 
 func get_input() -> void:
 	direction_x = Input.get_axis("left","right")
-	if Input.is_action_just_pressed("jump"):
+	if Input.is_action_just_pressed("jump") and (jump_count>0 and jump_count <=2):
 		velocity.y = -jump_strength
+		jump_count-=1
 	if Input.is_action_just_pressed("shoot") and $ReloadTimer.time_left == 0:
 		shoot.emit(position, get_local_mouse_position().normalized())
 		$ReloadTimer.start()
@@ -36,6 +38,8 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	animation()
 	update_marker()
+	if is_on_floor():
+		reset_jump()
 
 func animation():
 	var raw_dir = get_local_mouse_position().normalized()
@@ -49,4 +53,7 @@ func animation():
 	
 func update_marker():
 	$Marker.position = get_local_mouse_position().normalized()*40
+
+func reset_jump():
+	jump_count=2
 	
