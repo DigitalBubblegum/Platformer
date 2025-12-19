@@ -19,7 +19,7 @@ var gun_dir = {
 func get_input() -> void:
 	direction_x = Input.get_axis("left","right")
 	if Input.is_action_just_pressed("jump") and (jump_count>0 and jump_count <=2):
-		velocity.y = -jump_strength
+		velocity.y = -jump_strength*jump_count*0.7
 		jump_count-=1
 	if Input.is_action_just_pressed("shoot") and $ReloadTimer.time_left == 0:
 		shoot.emit(position, get_local_mouse_position().normalized())
