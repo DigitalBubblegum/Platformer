@@ -1,21 +1,88 @@
-[gd_scene load_steps=5 format=3 uid="uid://jolhvsfm1d1o"]
+[gd_scene load_steps=15 format=3 uid="uid://jolhvsfm1d1o"]
 
 [ext_resource type="Texture2D" uid="uid://vyr0ks75oxum" path="res://graphics/characters/drone.png" id="1_gs6nb"]
 [ext_resource type="Script" uid="uid://cv28o5gavxtfg" path="res://scripts/drone.gd" id="1_n87ok"]
+[ext_resource type="Texture2D" uid="uid://bav7n447bnsa5" path="res://graphics/fire/explosion.png" id="3_xcp44"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n87ok"]
+atlas = ExtResource("1_gs6nb")
+region = Rect2(0, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xcp44"]
+atlas = ExtResource("1_gs6nb")
+region = Rect2(32, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0tq5o"]
+atlas = ExtResource("1_gs6nb")
+region = Rect2(64, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6vf5s"]
+atlas = ExtResource("1_gs6nb")
+region = Rect2(96, 0, 32, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_in55t"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n87ok")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xcp44")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0tq5o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6vf5s")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n87ok"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xcp44"]
 radius = 94.0
 
+[sub_resource type="Animation" id="Animation_0tq5o"]
+resource_name = "new_animation"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 1.4052306),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7]
+}
+
+[sub_resource type="Animation" id="Animation_6vf5s"]
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_in55t"]
+_data = {
+&"RESET": SubResource("Animation_6vf5s"),
+&"new_animation": SubResource("Animation_0tq5o")
+}
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lvif6"]
+radius = 12.0
+
 [node name="Drone" type="CharacterBody2D"]
 collision_layer = 4
 collision_mask = 11
 script = ExtResource("1_n87ok")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_gs6nb")
-hframes = 4
+[node name="DroneSprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_in55t")
+autoplay = "default"
+frame = 3
+frame_progress = 1.0
 
 [node name="DroneCollider" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_n87ok")
@@ -31,6 +98,25 @@ shape = SubResource("CircleShape2D_xcp44")
 wait_time = 2.0
 autostart = true
 
+[node name="ExplosionSprite" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("3_xcp44")
+hframes = 8
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../ExplosionSprite")
+libraries = {
+&"": SubResource("AnimationLibrary_in55t")
+}
+
+[node name="CollisonArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisonArea"]
+shape = SubResource("CircleShape2D_lvif6")
+
 [connection signal="body_entered" from="DetectionArea" to="." method="_on_detection_area_body_entered"]
 [connection signal="body_exited" from="DetectionArea" to="." method="_on_detection_area_body_exited"]
 [connection signal="timeout" from="MoveRandomTimer" to="." method="_on_move_random_timer_timeout"]
+[connection signal="body_entered" from="CollisonArea" to="." method="_on_collison_area_body_entered"]

@@ -36,11 +36,29 @@ func droneCurrentHealth():
 func setPlayerDetected():
 	isPlayerDetected=!isPlayerDetected
 	return isPlayerDetected
+
+func hit():
+	droneHealth-=1
+	if(droneHealth<=0):
+		explosionAnimation()
+
+func explosionAnimation():
+	$DroneSprite.hide()
+	$ExplosionSprite.show()
+	$AnimationPlayer.play("new_animation")
+	await $AnimationPlayer.animation_finished
+	queue_free()
 	
 func _on_detection_area_body_entered(playerbody: CharacterBody2D) -> void:
 	player = playerbody
 	setPlayerDetected()
 
 
-func _on_detection_area_body_exited(body: Node2D) -> void:
+func _on_detection_area_body_exited(_playerbody: CharacterBody2D) -> void:
+	player=null
 	setPlayerDetected()
+
+
+func _on_collison_area_body_entered(_body: Node2D) -> void:
+	droneSpeed = 0
+	explosionAnimation()

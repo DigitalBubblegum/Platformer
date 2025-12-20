@@ -1,6 +1,8 @@
 extends Area2D
 var direction: Vector2 = Vector2.ZERO
 @export var bullet_speed: int = 400
+
+var drone_scene = preload("res://scenes/entities/drone.tscn")
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	var tween = get_tree().create_tween()
@@ -16,3 +18,10 @@ func setup(pos:Vector2, dir:Vector2):
 	direction = dir
 func _physics_process(delta: float) -> void:
 	position+=direction*bullet_speed*delta
+
+
+func _on_body_entered(body: Node2D) -> void:
+	if "hit" in body:
+		body.hit()
+	else:
+		queue_free()
