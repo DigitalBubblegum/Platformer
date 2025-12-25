@@ -1,8 +1,9 @@
-[gd_scene load_steps=15 format=3 uid="uid://jolhvsfm1d1o"]
+[gd_scene load_steps=17 format=3 uid="uid://jolhvsfm1d1o"]
 
 [ext_resource type="Texture2D" uid="uid://vyr0ks75oxum" path="res://graphics/characters/drone.png" id="1_gs6nb"]
 [ext_resource type="Script" uid="uid://cv28o5gavxtfg" path="res://scripts/drone.gd" id="1_n87ok"]
 [ext_resource type="Texture2D" uid="uid://bav7n447bnsa5" path="res://graphics/fire/explosion.png" id="3_xcp44"]
+[ext_resource type="Texture2D" uid="uid://dijla4pisrrw8" path="res://graphics/lights/main.png" id="4_0tq5o"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n87ok"]
 atlas = ExtResource("1_gs6nb")
@@ -47,6 +48,18 @@ radius = 94.0
 
 [sub_resource type="Animation" id="Animation_6vf5s"]
 length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../PointLight2D:energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
 
 [sub_resource type="Animation" id="Animation_0tq5o"]
 resource_name = "new_animation"
@@ -78,9 +91,26 @@ tracks/1/keys = {
 }]
 }
 
+[sub_resource type="Animation" id="Animation_in55t"]
+resource_name = "drone_light_flicker"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../PointLight2D:energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.43333334, 0.9),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.35, 3.0, 1.0]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_in55t"]
 _data = {
 &"RESET": SubResource("Animation_6vf5s"),
+&"drone_light_flicker": SubResource("Animation_in55t"),
 &"new_animation": SubResource("Animation_0tq5o")
 }
 
@@ -99,6 +129,7 @@ frame = 3
 frame_progress = 1.0
 
 [node name="DroneCollider" type="CollisionShape2D" parent="."]
+visible = false
 shape = SubResource("CircleShape2D_n87ok")
 
 [node name="DetectionArea" type="Area2D" parent="."]
@@ -106,6 +137,7 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="DetectionArea" type="CollisionShape2D" parent="DetectionArea"]
+visible = false
 shape = SubResource("CircleShape2D_xcp44")
 
 [node name="MoveRandomTimer" type="Timer" parent="."]
@@ -116,20 +148,27 @@ autostart = true
 visible = false
 texture = ExtResource("3_xcp44")
 hframes = 8
-frame = 6
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../ExplosionSprite")
 libraries = {
 &"": SubResource("AnimationLibrary_in55t")
 }
+autoplay = "drone_light_flicker"
 
 [node name="CollisonArea" type="Area2D" parent="."]
+visible = false
 collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CollisonArea"]
 shape = SubResource("CircleShape2D_lvif6")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(-3, 2)
+color = Color(1, 0, 0, 1)
+texture = ExtResource("4_0tq5o")
+texture_scale = 0.1
 
 [connection signal="body_entered" from="DetectionArea" to="." method="_on_detection_area_body_entered"]
 [connection signal="body_exited" from="DetectionArea" to="." method="_on_detection_area_body_exited"]

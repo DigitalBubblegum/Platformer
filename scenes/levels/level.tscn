@@ -1978,17 +1978,10 @@ tile_set = SubResource("TileSet_mbbpy")
 [node name="Entities" type="Node2D" parent="."]
 
 [node name="Player" parent="Entities" instance=ExtResource("1_377w7")]
-position = Vector2(3659, 144)
+position = Vector2(1834, 84)
 
 [node name="Drone" parent="Entities" instance=ExtResource("5_urvlt")]
-position = Vector2(3688, 64)
-droneHealth = 0
-
-[node name="Drone2" parent="Entities" instance=ExtResource("5_urvlt")]
-position = Vector2(3713, 103)
-
-[node name="Drone3" parent="Entities" instance=ExtResource("5_urvlt")]
-position = Vector2(3709, 73)
+position = Vector2(1927, 80)
 
 [node name="Bullets" type="Node2D" parent="."]
 
