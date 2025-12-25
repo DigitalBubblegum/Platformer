@@ -11,7 +11,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	pass
+	print('The current drone health is ',droneCurrentHealth())
 	
 func _physics_process(delta: float) -> void:
 	if player and isPlayerDetected:
@@ -47,17 +47,20 @@ func explosionAnimation():
 	$ExplosionSprite.show()
 	$AnimationPlayer.play("new_animation")
 	await $AnimationPlayer.animation_finished
+	chainReaction()
 	queue_free()
 	
+func chainReaction():
+	for drone in get_tree().get_nodes_in_group('Drones'):
+		if position.distance_to(drone.position) <20:
+			drone.explosionAnimation()
 func _on_detection_area_body_entered(playerbody: CharacterBody2D) -> void:
 	player = playerbody
 	setPlayerDetected()
 
-
 func _on_detection_area_body_exited(_playerbody: CharacterBody2D) -> void:
 	player=null
 	setPlayerDetected()
-
 
 func _on_collison_area_body_entered(_body: Node2D) -> void:
 	droneSpeed = 0
