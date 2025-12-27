@@ -11,7 +11,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	print('The current drone health is ',droneCurrentHealth())
+	pass
 	
 func _physics_process(delta: float) -> void:
 	if player and isPlayerDetected:

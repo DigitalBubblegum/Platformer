@@ -1,9 +1,14 @@
-[gd_scene load_steps=17 format=3 uid="uid://jolhvsfm1d1o"]
+[gd_scene load_steps=20 format=3 uid="uid://jolhvsfm1d1o"]
 
 [ext_resource type="Texture2D" uid="uid://vyr0ks75oxum" path="res://graphics/characters/drone.png" id="1_gs6nb"]
 [ext_resource type="Script" uid="uid://cv28o5gavxtfg" path="res://scripts/drone.gd" id="1_n87ok"]
+[ext_resource type="Shader" uid="uid://bgy7ndx4q4x2m" path="res://shaders/drone.tres" id="2_6vf5s"]
 [ext_resource type="Texture2D" uid="uid://bav7n447bnsa5" path="res://graphics/fire/explosion.png" id="3_xcp44"]
 [ext_resource type="Texture2D" uid="uid://dijla4pisrrw8" path="res://graphics/lights/main.png" id="4_0tq5o"]
+[ext_resource type="AudioStream" uid="uid://dtnqyh7corvdx" path="res://audio/explosion.wav" id="6_in55t"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_in55t"]
+shader = ExtResource("2_6vf5s")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n87ok"]
 atlas = ExtResource("1_gs6nb")
@@ -61,6 +66,22 @@ tracks/0/keys = {
 "values": [1.0]
 }
 
+[sub_resource type="Animation" id="Animation_in55t"]
+resource_name = "drone_light_flicker"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../PointLight2D:energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.43333334, 0.9),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.35, 3.0, 1.0]
+}
+
 [sub_resource type="Animation" id="Animation_0tq5o"]
 resource_name = "new_animation"
 length = 0.7
@@ -91,22 +112,6 @@ tracks/1/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_in55t"]
-resource_name = "drone_light_flicker"
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../PointLight2D:energy")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.43333334, 0.9),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [0.35, 3.0, 1.0]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_in55t"]
 _data = {
 &"RESET": SubResource("Animation_6vf5s"),
@@ -123,6 +128,7 @@ collision_mask = 11
 script = ExtResource("1_n87ok")
 
 [node name="DroneSprite" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_in55t")
 sprite_frames = SubResource("SpriteFrames_in55t")
 autoplay = "default"
 frame = 3
@@ -169,6 +175,9 @@ position = Vector2(-3, 2)
 color = Color(1, 0, 0, 1)
 texture = ExtResource("4_0tq5o")
 texture_scale = 0.1
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_in55t")
 
 [connection signal="body_entered" from="DetectionArea" to="." method="_on_detection_area_body_entered"]
 [connection signal="body_exited" from="DetectionArea" to="." method="_on_detection_area_body_exited"]

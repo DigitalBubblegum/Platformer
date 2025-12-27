@@ -8,6 +8,7 @@ func _ready() -> void:
 	var tween = get_tree().create_tween()
 	tween.tween_property($Sprite2D,"scale",Vector2(0.0,0.0),0.1)
 	tween.tween_property($Sprite2D,"scale",Vector2(1.0,1.0),0.1)
+	$AudioStreamPlayer2D.play()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
